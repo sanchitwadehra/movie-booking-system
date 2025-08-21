@@ -264,7 +264,7 @@ function Header() {
             {!authStatus && (
               <li className="w-full">
                 <NavLink
-                  to="/"
+                  to="/auth"
                   className={({ isActive }) =>
                     `text-lg py-2 relative group flex justify-center items-center w-full transition-all duration-200 hover:bg-gray-200 hover:dark:bg-gray-800 ${
                       isActive ? "text-green-500" : ""

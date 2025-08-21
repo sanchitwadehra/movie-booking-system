@@ -15,7 +15,7 @@ function LogoutBtn({closeMenu}) {
     const logoutToastId = toast.loading("Logging out...");
 
     try {
-      const response = await axios.post("/api/v1/users/logout");
+      const response = await axios.post("/api/v1/auth/logout");
 
       if (response.status === 200) {
         toast.dismiss(logoutToastId);
