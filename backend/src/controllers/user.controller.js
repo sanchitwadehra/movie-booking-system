@@ -4,7 +4,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
 
 const getCurrentUser = asyncHandler(async (req, res) => {
-  const currentUser = await User.findById(req.user?._id).select("-password -refreshToken -__v -createdAt -updatedAt -isAdmin -_id");
+  const currentUser = await User.findById(req.user?._id).select("-password -refreshToken -__v -createdAt -updatedAt -isAdmin");
   if (!currentUser) {
     throw new ApiError(400, "Some Error in Fetching User Details");
   }

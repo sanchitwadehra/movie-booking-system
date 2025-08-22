@@ -27,11 +27,13 @@ import healthRouter from "./routes/health.routes.js";
 import authRouter from "./routes/auth.routes.js";
 import userRouter from "./routes/user.routes.js";
 import adminRouter from "./routes/admin.routes.js";
+import dbRouter from "./routes/db.routes.js";
 
 app.use("/api/v1/health", healthRouter);
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
+app.use("/api/v1/db", dbRouter);
 
 app.use(errorHandler);
 

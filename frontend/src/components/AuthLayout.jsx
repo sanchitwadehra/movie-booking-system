@@ -6,7 +6,7 @@ import { useState } from "react";
 import { Container, Loading } from "../components";
 import { verifyLogin } from "../store/authSlice";
 import { cookieChecked } from "../store/authSlice";
-import toast from "react-hot-toast";
+// import toast from "react-hot-toast";
 
 export default function Protected({ children, authentication = true }) {
   const dispatch = useDispatch();
@@ -22,13 +22,14 @@ export default function Protected({ children, authentication = true }) {
         try {
           const refreshResponse = await axios.post("/api/v1/auth/refresh");
           if(refreshResponse.status === 200){
-            toast.success("Session refreshed");
+            // toast.success("Session refreshed");
             const userResponse = await axios.get("/api/v1/user");
             const user = userResponse.data.data.currentUser;
             dispatch(verifyLogin(user));
           }
         } catch (error) {
-          toast.error("Session expired, please login again");
+          // toast.error("Session expired, please login again");
+          console.log(error);
         } finally {
           dispatch(cookieChecked());
           setLoading(false);

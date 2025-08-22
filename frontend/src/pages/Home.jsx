@@ -33,7 +33,7 @@ function Home() {
             hoverBgColor="hover:bg-green-700"
             textColor="text-white"
             className="mt-4"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/movies")}
           >
             Get Tickets
           </Button>

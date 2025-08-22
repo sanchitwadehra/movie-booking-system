@@ -93,7 +93,7 @@ function Header() {
             <ul className="flex flex-row space-x-4 items-center">
               <li>
                 <NavLink
-                  to="/"
+                  to="/movies"
                   className={({ isActive }) =>
                     `text-lg py-2 relative group transition-all duration-200 ${
                       isActive ? "text-green-500" : ""
@@ -239,7 +239,7 @@ function Header() {
           <ul className="flex flex-col items-center p-4">
             <li>
               <NavLink
-                to="/"
+                to="/movies"
                 className={({ isActive }) =>
                   `text-lg py-2 relative group transition-all duration-200 ${
                     isActive ? "text-green-500" : ""

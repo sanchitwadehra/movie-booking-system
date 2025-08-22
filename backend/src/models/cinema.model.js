@@ -16,6 +16,7 @@ const cinemaSchema = new Schema(
       type: String,
       required: [true, "City is required"],
       trim: true,
+      lowercase: true,
     },
     screens: {
       type: [Schema.Types.ObjectId],
