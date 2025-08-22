@@ -1,13 +1,20 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useLocation } from "react-router";
+import { useParams, useLocation, useNavigate } from "react-router";
+import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Loading, Modal, Button, Select } from "../components";
+import { setLastRoute } from "../store/routeSlice";
 
 function Seats() {
   const { showId } = useParams();
   const location = useLocation();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { cinemaName, screenNumber, showtime } = location.state || {};
+  
+  // Get auth status from Redux store
+  const authStatus = useSelector((state) => state.auth.status);
 
   const [loading, setLoading] = useState(true);
   const [showData, setShowData] = useState(null);
@@ -26,6 +33,10 @@ function Seats() {
   ];
 
   useEffect(() => {
+    // Store current route in routeSlice when component mounts
+    const currentPath = `/seats/${showId}`;
+    dispatch(setLastRoute(currentPath));
+
     const fetchShowData = async () => {
       setLoading(true);
       try {
@@ -43,7 +54,7 @@ function Seats() {
     };
 
     fetchShowData();
-  }, [showId]);
+  }, [showId, dispatch]);
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -73,6 +84,46 @@ function Seats() {
     setNumSeats(newNumSeats);
     // Reset selected seats when number of seats changes
     setSelectedSeats([]);
+  };
+
+  const handlePayNow = async () => {
+    // Check authentication status first
+    if (!authStatus) {
+      toast.error("Please login to book seats");
+      navigate("/auth");
+      return;
+    }
+
+    // Ensure correct number of seats are selected
+    if (selectedSeats.length !== numSeats) {
+      toast.error(`Please select exactly ${numSeats} seat(s)`);
+      return;
+    }
+
+    // Show loading spinner and toast loading
+    setLoading(true);
+    const loadingToast = toast.loading("Processing your booking...");
+
+    try {
+      const response = await axios.post("/api/v1/booking/pay-now", {
+        showId,
+        seats: selectedSeats
+      });
+
+      if (response.data.success) {
+        toast.dismiss(loadingToast);
+        toast.success("Booking successful!");
+        // Navigate to home page after successful booking
+        navigate("/bookings");
+      }
+    } catch (error) {
+      toast.dismiss(loadingToast);
+      toast.error(
+        error.response?.data?.message || "Booking failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const renderSeats = () => {
@@ -161,7 +212,10 @@ function Seats() {
           <div className="grid grid-cols-10 gap-2 mb-8">{renderSeats()}</div>
 
           {selectedSeats.length === numSeats && (
-            <Button className="w-1/2 bg-green-600 hover:bg-green-700">
+            <Button 
+              className="w-1/2 bg-green-600 hover:bg-green-700" 
+              onClick={handlePayNow}
+            >
               Pay Now
             </Button>
           )}

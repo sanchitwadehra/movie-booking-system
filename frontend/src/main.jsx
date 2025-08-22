@@ -7,7 +7,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import store, { persistor } from "./store/store.js";
 import { Toaster } from "react-hot-toast";
 import { createBrowserRouter, RouterProvider } from "react-router";
-import { Home, PrivacyPolicy, RefundPolicy, TermsAndConditions, Auth, Movies, Cinemas, Seats } from "./pages";
+import { Home, PrivacyPolicy, RefundPolicy, TermsAndConditions, Auth, Movies, Cinemas, Seats, Bookings } from "./pages";
 import { AuthLayout } from "./components";
 
 const router = createBrowserRouter([
@@ -76,6 +76,14 @@ const router = createBrowserRouter([
         element: (
           <AuthLayout authentication={false}>
             <Seats />
+          </AuthLayout>
+        ),
+      },
+      {
+        path: "/bookings",
+        element: (
+          <AuthLayout authentication={true}>
+            <Bookings />
           </AuthLayout>
         ),
       },

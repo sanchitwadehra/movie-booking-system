@@ -4,6 +4,7 @@ import { Loading, Input, Button } from "../components";
 import { Navigate } from "react-router";
 import axios from "axios";
 import { verifyLogin } from "../store/authSlice";
+import { setLastRoute } from "../store/routeSlice";
 import toast from "react-hot-toast";
 import validator from "validator";
 

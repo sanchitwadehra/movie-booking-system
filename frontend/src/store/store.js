@@ -22,7 +22,7 @@ const rootReducer = combineReducers({
 const persistConfig = {
   key: "root",
   storage, // you can change this to sessionStorage if needed
-  whitelist: ["route", "region"], // Persist only these slices
+  whitelist: ["route", "region"],
 };
 
 // Create persisted reducer
