@@ -3,4 +3,4 @@ combined.js
 commit-history.txt
 
 # npx repomix --output combined.js --include 'frontend/src/**','backend/src/**' --verbose
-# git log --pretty=format:"%h | %ad | %s" --date=iso > commit-history.txt
+# git log --pretty=format:"%h | %ad | %s%n%b" --date=iso > commit-history.txt
