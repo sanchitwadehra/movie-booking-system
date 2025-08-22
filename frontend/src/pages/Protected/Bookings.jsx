@@ -35,16 +35,20 @@ function Bookings() {
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
-    return date.toLocaleTimeString("en-US", {
+    // Convert UTC time to IST (Indian Standard Time) for display
+    return date.toLocaleTimeString("en-IN", {
+      timeZone: "Asia/Kolkata",
       hour: "2-digit",
       minute: "2-digit",
-      hour12: true,
+      hour12: false,
     });
   };
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
-    return date.toLocaleDateString("en-US", {
+    // Convert UTC date to IST for display
+    return date.toLocaleDateString("en-IN", {
+      timeZone: "Asia/Kolkata",
       year: "numeric",
       month: "long", 
       day: "numeric",

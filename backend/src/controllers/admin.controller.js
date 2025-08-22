@@ -63,69 +63,70 @@ const addShow = asyncHandler(async (req, res) => {
 });
 
 const generateSampleData = asyncHandler(async (req, res) => {
-    // Clear existing data
-    await Movie.deleteMany({});
-    await Show.deleteMany({});
-    await Screen.deleteMany({});
-    await Cinema.deleteMany({});
-  
-    // 1. Create Movies
-    const movies = await Movie.create([
-      {
-        name: "Inception",
-        description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
-        image: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
-      },
-      {
-        name: "Oppenheimer",
-        description: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
-        image: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
-      },
-    ]);
-  
-    const [inception, oppenheimer] = movies;
-  
-    // 2. Create Shows
-    const shows = await Show.create([
-      // Inception Shows
+  // Clear existing data
+  await Movie.deleteMany({});
+  await Show.deleteMany({});
+  await Screen.deleteMany({});
+  await Cinema.deleteMany({});
+
+  // 1. Create Movies
+  const movies = await Movie.create([
+    {
+      name: "Inception",
+      description: "A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.",
+      image: "https://image.tmdb.org/t/p/w500/9gk7adHYeDvHkCSEqAvQNLV5Uge.jpg",
+    },
+    {
+      name: "Oppenheimer",
+      description: "The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb.",
+      image: "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg",
+    },
+  ]);
+
+  const [inception, oppenheimer] = movies;
+
+  // 2. Define Cinema Data
+  const cinemaData = [
+    { name: "PVR Elante", city: "Chandigarh" },
+    { name: "Cinepolis Jagat", city: "Chandigarh" },
+    { name: "PVR VR Punjab", city: "Mohali" },
+    { name: "Cinepolis Bestech", city: "Mohali" },
+  ];
+
+  // 3. Loop through each cinema to create unique screens and shows
+  for (const cinemaInfo of cinemaData) {
+    // For each cinema, create a unique set of shows for its screens
+    const showsForThisCinema = await Show.create([
+      // Shows for Screen 1
       { movieId: inception._id, showtime: "2025-08-23T10:00:00.000Z" },
-      { movieId: inception._id, showtime: "2025-08-23T13:00:00.000Z" },
-      { movieId: inception._id, showtime: "2025-08-23T16:00:00.000Z" },
-      { movieId: inception._id, showtime: "2025-08-24T19:00:00.000Z" },
-      { movieId: inception._id, showtime: "2025-08-24T22:00:00.000Z" },
-      { movieId: inception._id, showtime: "2025-08-24T11:00:00.000Z" },
-      // Oppenheimer Shows
       { movieId: oppenheimer._id, showtime: "2025-08-23T09:30:00.000Z" },
+      // Shows for Screen 2
+      { movieId: inception._id, showtime: "2025-08-23T13:00:00.000Z" },
       { movieId: oppenheimer._id, showtime: "2025-08-23T12:30:00.000Z" },
+      // Shows for Screen 3
+      { movieId: inception._id, showtime: "2025-08-23T16:00:00.000Z" },
       { movieId: oppenheimer._id, showtime: "2025-08-23T15:30:00.000Z" },
+      // Shows for Screen 4
+      { movieId: inception._id, showtime: "2025-08-24T19:00:00.000Z" },
       { movieId: oppenheimer._id, showtime: "2025-08-24T18:30:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-24T21:30:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-24T10:30:00.000Z" },
     ]);
-  
-    // 3. Create Screens and Cinemas
-    const cinemaData = [
-      { name: "PVR Elante", city: "Chandigarh" },
-      { name: "Cinepolis Jagat", city: "Chandigarh" },
-      { name: "PVR VR Punjab", city: "Mohali" },
-      { name: "Cinepolis Bestech", city: "Mohali" },
-    ];
-  
-    for (const cinemaInfo of cinemaData) {
-      const screenDocs = await Screen.create([
-        { screenNumber: 1, totalSeats: 100, shows: [shows[0]._id, shows[6]._id] },
-        { screenNumber: 2, totalSeats: 100, shows: [shows[1]._id, shows[7]._id] },
-        { screenNumber: 3, totalSeats: 100, shows: [shows[2]._id, shows[8]._id] },
-        { screenNumber: 4, totalSeats: 100, shows: [shows[3]._id, shows[9]._id] },
-      ]);
-  
-      await Cinema.create({
-        ...cinemaInfo,
-        screens: screenDocs.map(s => s._id),
-      });
-    }
-  
-    return res.status(201).json(new ApiResponse(201, {}, "Sample data generated successfully"));
-  });
+
+    // Create the screens and assign the unique shows we just made
+    const screenDocs = await Screen.create([
+      { screenNumber: 1, totalSeats: 100, shows: [showsForThisCinema[0]._id, showsForThisCinema[1]._id] },
+      { screenNumber: 2, totalSeats: 100, shows: [showsForThisCinema[2]._id, showsForThisCinema[3]._id] },
+      { screenNumber: 3, totalSeats: 100, shows: [showsForThisCinema[4]._id, showsForThisCinema[5]._id] },
+      { screenNumber: 4, totalSeats: 100, shows: [showsForThisCinema[6]._id, showsForThisCinema[7]._id] },
+    ]);
+
+    // Create the cinema and link its screens
+    await Cinema.create({
+      ...cinemaInfo,
+      screens: screenDocs.map(s => s._id),
+    });
+  }
+
+  return res.status(201).json(new ApiResponse(201, {}, "Sample data generated successfully"));
+});
 
 export { addMovie, addCinema, addScreen, addShow, generateSampleData };

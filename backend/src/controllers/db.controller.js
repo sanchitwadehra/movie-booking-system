@@ -25,16 +25,19 @@ const getMovies = asyncHandler(async (req, res) => {
     return movieObj;
   });
 
+  // Sort movies alphabetically by name (A to Z)
+  cleanMovies.sort((a, b) => a.name.localeCompare(b.name, undefined, { sensitivity: 'base' }));
+
   return res
     .status(200)
     .json(new ApiResponse(200, cleanMovies, "Movies fetched successfully"));
 });
 
 const getScreens = asyncHandler(async (req, res) => {
-  const { city, movieId } = req.body;
+  const { city, movieId, date } = req.body;
 
-  if (!city || !movieId) {
-    throw new ApiError(400, "City and movie are required");
+  if (!city || !movieId || !date) {
+    throw new ApiError(400, "City, movie, and date are required");
   }
 
   const movie = await Movie.findOne({ _id: movieId });
@@ -42,7 +45,19 @@ const getScreens = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Movie not found");
   }
 
-  const shows = await Show.find({ movieId: movie._id });
+  // Create UTC date range for the selected date (00:00:00 to 23:59:59.999 UTC)
+  const startOfDay = new Date(`${date}T00:00:00.000Z`);
+  const endOfDay = new Date(`${date}T23:59:59.999Z`);
+
+  // Find shows for the specific movie and date
+  const shows = await Show.find({ 
+    movieId: movie._id,
+    showtime: {
+      $gte: startOfDay,
+      $lte: endOfDay
+    }
+  });
+
   const showIds = shows.map((s) => s._id);
 
   const screens = await Screen.find({ shows: { $in: showIds } }).populate(
