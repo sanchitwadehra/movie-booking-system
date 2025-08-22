@@ -17,9 +17,12 @@ function Cinemas() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(!regionData);
   const [selectedDate, setSelectedDate] = useState(() => {
-    // Default to today's date
+    // Default to today's date in local timezone
     const today = new Date();
-    return today.toISOString().split('T')[0]; // Format: YYYY-MM-DD
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
   });
 
   const handleRegionSelect = (city) => {
