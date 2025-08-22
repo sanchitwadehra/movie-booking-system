@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { setRegion } from "../store/regionSlice";
-import { setCinemaData } from "../store/cinemaSlice";
+import { setCinemaData, getCachedCinemaData } from "../store/cinemaSlice";
 import { Loading, Modal, Button, Select } from "../components";
 
 function Cinemas() {
@@ -12,7 +12,7 @@ function Cinemas() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { regionData } = useSelector((state) => state.region);
-  const { cinemas: cinemasData } = useSelector((state) => state.cinema);
+  const { cinemas: cinemasData, cache } = useSelector((state) => state.cinema);
 
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(!regionData);
@@ -32,6 +32,17 @@ function Cinemas() {
       if (!regionData || !selectedDate) return;
 
       const normalizedRegion = regionData.trim().toLowerCase();
+      const cacheKey = `${movieId}-${selectedDate}-${normalizedRegion}`;
+
+      // Check if data exists in cache
+      if (cache[cacheKey]) {
+        setLoading(true);
+        dispatch(getCachedCinemaData({ cacheKey }));
+        setLoading(false);
+        return;
+      }
+
+      // If not in cache, fetch from API
       setLoading(true);
       const toastId = toast.loading(`Fetching cinemas in ${regionData} for ${selectedDate}...`);
 
@@ -43,7 +54,10 @@ function Cinemas() {
         });
 
         if (response.data.success) {
-          dispatch(setCinemaData(response.data.data));
+          dispatch(setCinemaData({ 
+            cacheKey, 
+            data: response.data.data 
+          }));
         }
       } catch (error) {
         toast.error(error.response?.data?.message || "Failed to fetch cinemas");
@@ -54,7 +68,7 @@ function Cinemas() {
     };
 
     fetchCinemas();
-  }, [regionData, movieId, selectedDate, dispatch]);
+  }, [regionData, movieId, selectedDate, dispatch, cache]);
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
