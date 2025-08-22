@@ -97,18 +97,18 @@ const generateSampleData = asyncHandler(async (req, res) => {
   for (const cinemaInfo of cinemaData) {
     // For each cinema, create a unique set of shows for its screens
     const showsForThisCinema = await Show.create([
-      // Shows for Screen 1
-      { movieId: inception._id, showtime: "2025-08-23T10:00:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-23T09:30:00.000Z" },
-      // Shows for Screen 2
-      { movieId: inception._id, showtime: "2025-08-23T13:00:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-23T12:30:00.000Z" },
-      // Shows for Screen 3
-      { movieId: inception._id, showtime: "2025-08-23T16:00:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-23T15:30:00.000Z" },
-      // Shows for Screen 4
-      { movieId: inception._id, showtime: "2025-08-24T19:00:00.000Z" },
-      { movieId: oppenheimer._id, showtime: "2025-08-24T18:30:00.000Z" },
+      // Shows for Screen 1 - August 23rd IST (stored as UTC)
+      { movieId: inception._id, showtime: "2025-08-23T04:30:00.000Z" }, // 10:00 AM IST
+      { movieId: oppenheimer._id, showtime: "2025-08-23T06:30:00.000Z" }, // 12:00 PM IST
+      // Shows for Screen 2 - August 23rd IST (stored as UTC)
+      { movieId: inception._id, showtime: "2025-08-23T09:30:00.000Z" }, // 3:00 PM IST
+      { movieId: oppenheimer._id, showtime: "2025-08-23T12:30:00.000Z" }, // 6:00 PM IST
+      // Shows for Screen 3 - August 23rd IST (stored as UTC)
+      { movieId: inception._id, showtime: "2025-08-23T15:30:00.000Z" }, // 9:00 PM IST
+      { movieId: oppenheimer._id, showtime: "2025-08-23T17:30:00.000Z" }, // 11:00 PM IST
+      // Shows for Screen 4 - August 24th IST (stored as UTC)
+      { movieId: inception._id, showtime: "2025-08-24T04:30:00.000Z" }, // 10:00 AM IST Aug 24
+      { movieId: oppenheimer._id, showtime: "2025-08-24T12:30:00.000Z" }, // 6:00 PM IST Aug 24
     ]);
 
     // Create the screens and assign the unique shows we just made

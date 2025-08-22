@@ -45,9 +45,17 @@ const getScreens = asyncHandler(async (req, res) => {
     throw new ApiError(404, "Movie not found");
   }
 
-  // Create UTC date range for the selected date (00:00:00 to 23:59:59.999 UTC)
-  const startOfDay = new Date(`${date}T00:00:00.000Z`);
-  const endOfDay = new Date(`${date}T23:59:59.999Z`);
+  // Convert the selected date from IST to UTC range
+  // When user selects a date, they expect shows for that full day in IST
+  // IST is UTC+5:30, so we need to subtract 5.5 hours to get the UTC equivalent
+  
+  // Create IST date range first (what the user actually wants)
+  const istStartOfDay = new Date(`${date}T00:00:00+05:30`);
+  const istEndOfDay = new Date(`${date}T23:59:59.999+05:30`);
+  
+  // Convert to UTC (this automatically handles the timezone conversion)
+  const startOfDay = new Date(istStartOfDay.toISOString());
+  const endOfDay = new Date(istEndOfDay.toISOString());
 
   // Find shows for the specific movie and date
   const shows = await Show.find({ 
