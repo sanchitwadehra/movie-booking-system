@@ -4,7 +4,11 @@ A full-stack web application similar to BookMyShow, built as part of a hiring as
 
 ## 🎯 Live Demo
 
-The application is deployed and accessible at: **[Add your deployment URL here]**
+The application is deployed and accessible at: **[mbs-frontend-ten.vercel.app](https://mbs-frontend-ten.vercel.app)**
+
+You can try out the admin features using these credentials:
+- **Email**: `abc@email.com`
+- **Password**: `Abc@1234`
 
 ## 🛠️ Tech Stack
 
@@ -153,7 +157,7 @@ The application is deployed and accessible at: **[Add your deployment URL here]*
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/movie-booking-system.git
+   git clone https://github.com/sanchitwadehra/movie-booking-system.git
    cd movie-booking-system
    ```
 
