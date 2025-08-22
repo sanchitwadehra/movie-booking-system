@@ -80,7 +80,7 @@ function Seats() {
           <div
             key={seatId}
             onClick={() => handleSeatClick(seatId)}
-            className={`w-10 h-10 flex items-center justify-center rounded-md cursor-pointer transition-colors
+            className={`w-6 h-6 sm:w-8 sm:h-8 md:w-10 md:h-10 flex items-center justify-center rounded-md cursor-pointer transition-colors
               ${isBooked ? "bg-red-500 cursor-not-allowed" : ""}
               ${isSelected ? "bg-green-500" : ""}
               ${
