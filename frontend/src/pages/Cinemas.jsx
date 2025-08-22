@@ -25,6 +25,20 @@ function Cinemas() {
     return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
   });
 
+  // Function to calculate the upcoming Sunday
+  const getUpcomingSunday = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
+    const daysUntilSunday = dayOfWeek === 0 ? 7 : 7 - dayOfWeek; // If today is Sunday, get next Sunday
+    const upcomingSunday = new Date(today);
+    upcomingSunday.setDate(today.getDate() + daysUntilSunday);
+    
+    const year = upcomingSunday.getFullYear();
+    const month = String(upcomingSunday.getMonth() + 1).padStart(2, "0");
+    const day = String(upcomingSunday.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
+  };
+
   const handleRegionSelect = (city) => {
     dispatch(setRegion(city));
     setIsModalOpen(false);
@@ -116,6 +130,7 @@ function Cinemas() {
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
               min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
+              max={getUpcomingSunday()} // Limit to upcoming Sunday
               className="px-3 py-2 rounded-md 
                 bg-gray-100 dark:bg-gray-700 
                 text-black dark:text-white 
