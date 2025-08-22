@@ -25,6 +25,14 @@ function Cinemas() {
     return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
   });
 
+  // Function to get local date in YYYY-MM-DD format
+  const getLocalDateString = (date = new Date()) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
+  };
+
   // Function to calculate the upcoming Sunday
   const getUpcomingSunday = () => {
     const today = new Date();
@@ -33,10 +41,7 @@ function Cinemas() {
     const upcomingSunday = new Date(today);
     upcomingSunday.setDate(today.getDate() + daysUntilSunday);
     
-    const year = upcomingSunday.getFullYear();
-    const month = String(upcomingSunday.getMonth() + 1).padStart(2, "0");
-    const day = String(upcomingSunday.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
+    return getLocalDateString(upcomingSunday);
   };
 
   const handleRegionSelect = (city) => {
@@ -129,7 +134,7 @@ function Cinemas() {
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
+              min={getLocalDateString()} // Prevent selecting past dates
               max={getUpcomingSunday()} // Limit to upcoming Sunday
               className="px-3 py-2 rounded-md 
                 bg-gray-100 dark:bg-gray-700 
