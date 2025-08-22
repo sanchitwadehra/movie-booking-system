@@ -17,7 +17,7 @@ const getMovies = asyncHandler(async (req, res) => {
   }, []);
 
   // Remove unwanted fields from movies
-  const cleanMovies = movies.map(movie => {
+  const cleanMovies = movies.map((movie) => {
     const movieObj = movie.toObject();
     delete movieObj.createdAt;
     delete movieObj.updatedAt;
@@ -34,7 +34,7 @@ const getScreens = asyncHandler(async (req, res) => {
   const { city, movieId } = req.body;
 
   if (!city || !movieId) {
-    throw new ApiError(400, "City and movie name are required");
+    throw new ApiError(400, "City and movie are required");
   }
 
   const movie = await Movie.findOne({ _id: movieId });
@@ -61,66 +61,80 @@ const getScreens = asyncHandler(async (req, res) => {
     },
   });
 
-  const filteredCinemas = cinemas.map((cinema) => {
-    const filteredScreens = cinema.screens
-      .map((screen) => {
-        const filteredShows = screen.shows.filter((show) =>
-          showIds.some((id) => id.equals(show._id))
-        );
-        if (filteredShows.length > 0) {
-          // Clean shows data and sort by time
-          const cleanShows = filteredShows.map(show => {
-            const showObj = show.toObject();
-            delete showObj.createdAt;
-            delete showObj.updatedAt;
-            delete showObj.__v;
-            return showObj;
-          }).sort((a, b) => {
-            // Sort shows by showtime (Date object)
-            if (a.showtime && b.showtime) {
-              return new Date(a.showtime) - new Date(b.showtime);
-            }
-            return 0;
-          });
-          
-          // Clean screen data
-          const screenObj = screen.toObject();
-          delete screenObj.createdAt;
-          delete screenObj.updatedAt;
-          delete screenObj.__v;
-          
-          return { ...screenObj, shows: cleanShows };
-        }
-        return null;
-      })
-      .filter((screen) => screen !== null)
-      .sort((a, b) => {
-        // Sort screens by screen number in ascending order
-        return a.screenNumber - b.screenNumber;
-      });
+  const filteredCinemas = cinemas
+    .map((cinema) => {
+      const filteredScreens = cinema.screens
+        .map((screen) => {
+          const filteredShows = screen.shows.filter((show) =>
+            showIds.some((id) => id.equals(show._id))
+          );
+          if (filteredShows.length > 0) {
+            // Clean shows data and sort by time
+            const cleanShows = filteredShows
+              .map((show) => {
+                const showObj = show.toObject();
+                delete showObj.createdAt;
+                delete showObj.updatedAt;
+                delete showObj.__v;
+                return showObj;
+              })
+              .sort((a, b) => {
+                // Sort shows by showtime (Date object)
+                if (a.showtime && b.showtime) {
+                  return new Date(a.showtime) - new Date(b.showtime);
+                }
+                return 0;
+              });
 
-    // Clean cinema data
-    const cinemaObj = cinema.toObject();
-    delete cinemaObj.createdAt;
-    delete cinemaObj.updatedAt;
-    delete cinemaObj.__v;
+            // Clean screen data
+            const screenObj = screen.toObject();
+            delete screenObj.createdAt;
+            delete screenObj.updatedAt;
+            delete screenObj.__v;
 
-    return { ...cinemaObj, screens: filteredScreens };
-  })
-  .sort((a, b) => {
-    // Sort cinemas alphabetically by name
-    return a.name.localeCompare(b.name);
-  });
+            return { ...screenObj, shows: cleanShows };
+          }
+          return null;
+        })
+        .filter((screen) => screen !== null)
+        .sort((a, b) => {
+          // Sort screens by screen number in ascending order
+          return a.screenNumber - b.screenNumber;
+        });
+
+      // Clean cinema data
+      const cinemaObj = cinema.toObject();
+      delete cinemaObj.createdAt;
+      delete cinemaObj.updatedAt;
+      delete cinemaObj.__v;
+
+      return { ...cinemaObj, screens: filteredScreens };
+    })
+    .sort((a, b) => {
+      // Sort cinemas alphabetically by name
+      return a.name.localeCompare(b.name);
+    });
 
   return res
     .status(200)
     .json(
-      new ApiResponse(
-        200,
-        filteredCinemas,
-        "Screens fetched successfully"
-      )
+      new ApiResponse(200, filteredCinemas, "Screens fetched successfully")
     );
 });
 
-export { getMovies, getScreens };
+const getShow = asyncHandler(async (req, res) => {
+  const { showId } = req.body;
+
+  const show = await Show.findOne({ _id: showId })
+    .populate({
+      path: "movieId",
+      select: "-__v -createdAt -updatedAt",
+    })
+    .select("-__v -createdAt -updatedAt");
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, show, "Show fetched successfully"));
+});
+
+export { getMovies, getScreens, getShow };

@@ -7,6 +7,7 @@ import authSlice from './authSlice';
 import routeSlice from './routeSlice';
 import movieSlice from './movieSlice';
 import regionSlice from './regionSlice';
+import cinemaSlice from './cinemaSlice';
 
 // Combine all reducers
 const rootReducer = combineReducers({
@@ -14,13 +15,14 @@ const rootReducer = combineReducers({
   route: routeSlice,
   movie: movieSlice,
   region: regionSlice,
+  cinema: cinemaSlice,
 });
 
 // Persist configuration
 const persistConfig = {
-  key: 'root',
+  key: "root",
   storage, // you can change this to sessionStorage if needed
-  whitelist: ['route', 'region'], // Persist only these slices
+  whitelist: ["route", "region"], // Persist only these slices
 };
 
 // Create persisted reducer
