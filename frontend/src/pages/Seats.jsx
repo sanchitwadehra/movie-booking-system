@@ -7,7 +7,7 @@ import { Loading, Modal, Button, Select } from "../components";
 function Seats() {
   const { showId } = useParams();
   const location = useLocation();
-  const { cinemaName, screenNumber } = location.state || {};
+  const { cinemaName, screenNumber, showtime } = location.state || {};
 
   const [loading, setLoading] = useState(true);
   const [showData, setShowData] = useState(null);
@@ -44,6 +44,15 @@ function Seats() {
 
     fetchShowData();
   }, [showId]);
+
+  const formatTime = (isoString) => {
+    const date = new Date(isoString);
+    return date.toLocaleTimeString("en-US", {
+      hour: "2-digit",
+      minute: "2-digit",
+      hour12: true,
+    });
+  };
 
   const handleSeatClick = (seat) => {
     if (showData.seatsBooked.includes(seat)) return;
@@ -130,6 +139,7 @@ function Seats() {
           {cinemaName && screenNumber && (
             <p className="text-lg text-gray-500 mb-6">
               {cinemaName} - Screen {screenNumber}
+              {showtime && ` - ${formatTime(showtime)}`}
             </p>
           )}
 

@@ -69,8 +69,8 @@ function Cinemas() {
     });
   };
 
-  const handleShowClick = (showId, cinemaName, screenNumber) => {
-    navigate(`/seats/${showId}`, { state: { cinemaName, screenNumber } });
+  const handleShowClick = (showId, cinemaName, screenNumber, showtime) => {
+    navigate(`/seats/${showId}`, { state: { cinemaName, screenNumber, showtime } });
   };
 
   return (
@@ -132,7 +132,8 @@ function Cinemas() {
                           handleShowClick(
                             show._id,
                             cinema.name,
-                            show.screenNumber
+                            show.screenNumber,
+                            show.showtime
                           )
                         }
                       >
