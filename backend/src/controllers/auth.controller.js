@@ -80,7 +80,7 @@ const loginUser = async (email, password) => {
       // Sets the cookie's expiration time (in milliseconds), using the refresh token expiry from environment variables
       maxAge: process.env.REFRESH_TOKEN_EXPIRY,
       // Restricts the cookie to same-site requests to help prevent CSRF attacks
-      sameSite: "strict",
+      sameSite: process.env.NODE_DEP_SAMESITE,
     };
 
     if (!loggedinuser) {
@@ -172,7 +172,7 @@ const logoutUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     maxAge: 0,
-    sameSite: "strict",
+    sameSite: process.env.NODE_DEP_SAMESITE,
   };
 
   return res
@@ -203,7 +203,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         maxAge: 0,
-        sameSite: "strict",
+        sameSite: process.env.NODE_DEP_SAMESITE,
       };
       return res
         .status(401)
@@ -220,7 +220,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: process.env.REFRESH_TOKEN_EXPIRY,
-      sameSite: "strict",
+      sameSite: process.env.NODE_DEP_SAMESITE,
     };
 
     return res
