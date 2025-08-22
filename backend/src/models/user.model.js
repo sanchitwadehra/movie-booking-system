@@ -20,6 +20,11 @@ const userSchema = new Schema(
       type: String,
       required: [true, "Password is required"],
     },
+    bookings: {
+      type: [Schema.Types.ObjectId],
+      ref: "Booking",
+      default: [],
+    },
     refreshToken: {
       type: String,
     },
