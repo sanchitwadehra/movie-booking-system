@@ -8,7 +8,7 @@ const showSchema = new Schema(
       required: [true, "Movie is required"],
     },
     seatsBooked: {
-      type: Array,
+      type: [String],
       required: [true, "Seats booked are required"],
       default: [],
     },

@@ -12,6 +12,10 @@ const screenSchema = new Schema(
       required: [true, "Shows are required"],
       default: [],
     },
+    totalSeats: {
+      type: Number,
+      required: [true, "Total seats are required"],
+    },
   },
   {
     timestamps: true,

@@ -15,12 +15,7 @@ const bookingSchema = new Schema(
     seatsBooked: {
       type: Array,
       required: [true, "Seats booked are required"],
-    },
-    payment: {
-      type: Schema.Types.ObjectId,
-      ref: "Payment",
-      required: [true, "Payment is required"],
-    },
+    }
   },
   {
     timestamps: true,
