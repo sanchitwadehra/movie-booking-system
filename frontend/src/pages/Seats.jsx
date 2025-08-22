@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useLocation, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import apiClient from "../api/axios";
 import toast from "react-hot-toast";
 import { Loading, Modal, Button, Select } from "../components";
 import { setLastRoute } from "../store/routeSlice";
@@ -40,7 +40,7 @@ function Seats() {
     const fetchShowData = async () => {
       setLoading(true);
       try {
-        const response = await axios.post("/api/v1/db/show", { showId });
+        const response = await apiClient.post("/api/v1/db/show", { showId });
         if (response.data.success) {
           setShowData(response.data.data);
         }
@@ -107,7 +107,7 @@ function Seats() {
     const loadingToast = toast.loading("Processing your booking...");
 
     try {
-      const response = await axios.post("/api/v1/booking/pay-now", {
+      const response = await apiClient.post("/api/v1/booking/pay-now", {
         showId,
         seats: selectedSeats
       });

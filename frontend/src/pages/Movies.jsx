@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router";
-import axios from "axios";
+import apiClient from "../api/axios";
 import toast from "react-hot-toast";
 import { setMovies } from "../store/movieSlice";
 import { Loading, Button } from "../components";
@@ -14,7 +14,7 @@ function Movies() {
   useEffect(() => {
     const fetchMovies = async () => {
       try {
-        const response = await axios.get("/api/v1/db/movies");
+        const response = await apiClient.get("/api/v1/db/movies");
         if (response.data.success) {
           toast.dismiss();
           dispatch(setMovies(response.data.data));

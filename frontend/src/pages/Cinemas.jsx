@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router";
 import { useSelector, useDispatch } from "react-redux";
-import axios from "axios";
+import apiClient from "../api/axios";
 import toast from "react-hot-toast";
 import { setRegion } from "../store/regionSlice";
 import { setCinemaData, getCachedCinemaData } from "../store/cinemaSlice";
@@ -71,7 +71,7 @@ function Cinemas() {
       );
 
       try {
-        const response = await axios.post("/api/v1/db/screens", {
+        const response = await apiClient.post("/api/v1/db/screens", {
           city: normalizedRegion,
           movieId: movieId,
           date: selectedDate,

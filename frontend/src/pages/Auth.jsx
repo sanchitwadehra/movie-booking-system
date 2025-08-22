@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Loading, Input, Button } from "../components";
 import { Navigate } from "react-router";
-import axios from "axios";
+import apiClient from "../api/axios";
 import { verifyLogin } from "../store/authSlice";
 import { setLastRoute } from "../store/routeSlice";
 import toast from "react-hot-toast";
@@ -29,7 +29,7 @@ function Auth() {
       return;
     }
     try {
-      const response = await axios.post("/api/v1/auth", { email, password });
+      const response = await apiClient.post("/api/v1/auth", { email, password });
       if (response.status === 200) {
         toast.success("Login successful");
         dispatch(verifyLogin(response.data.data.user));

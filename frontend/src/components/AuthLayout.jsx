@@ -1,4 +1,4 @@
-import axios from "axios";
+import apiClient from "../api/axios";
 import { useEffect } from "react";
 import { Navigate } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,10 +20,10 @@ export default function Protected({ children, authentication = true }) {
     const performInitialCheck = async () => {
       if (!cookieCheckedStatus) {
         try {
-          const refreshResponse = await axios.post("/api/v1/auth/refresh");
+          const refreshResponse = await apiClient.post("/api/v1/auth/refresh");
           if(refreshResponse.status === 200){
             // toast.success("Session refreshed");
-            const userResponse = await axios.get("/api/v1/user");
+            const userResponse = await apiClient.get("/api/v1/user");
             const user = userResponse.data.data.currentUser;
             dispatch(verifyLogin(user));
           }

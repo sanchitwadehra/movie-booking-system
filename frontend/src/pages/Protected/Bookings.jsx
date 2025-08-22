@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+import apiClient from "../../api/axios";
 import toast from "react-hot-toast";
 import { Loading } from "../../components";
 import { setLastRoute } from "../../store/routeSlice";
@@ -17,7 +17,7 @@ function Bookings() {
     const fetchBookings = async () => {
       setLoading(true);
       try {
-        const response = await axios.get("/api/v1/booking/get-bookings");
+        const response = await apiClient.get("/api/v1/booking/get-bookings");
         if (response.data.success) {
           setBookings(response.data.data.bookings);
         }

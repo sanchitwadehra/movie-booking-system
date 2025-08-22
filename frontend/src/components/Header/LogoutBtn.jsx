@@ -2,7 +2,7 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import { Button } from "../../components";
-import axios from "axios";
+import apiClient from "../../api/axios";
 import toast from "react-hot-toast";
 
 function LogoutBtn({closeMenu}) {
@@ -15,7 +15,7 @@ function LogoutBtn({closeMenu}) {
     const logoutToastId = toast.loading("Logging out...");
 
     try {
-      const response = await axios.post("/api/v1/auth/logout");
+      const response = await apiClient.post("/api/v1/auth/logout");
 
       if (response.status === 200) {
         toast.dismiss(logoutToastId);
