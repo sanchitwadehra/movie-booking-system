@@ -24,6 +24,10 @@ const payNow = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Seats are required");
     }
 
+    if(seats.length > 6){
+      throw new ApiError(400, "You can only book up to 6 seats at a time");
+    }
+
     // Ensure seats are stored as individual strings
     const seatStrings = seats.map(seat => String(seat).trim());
 
