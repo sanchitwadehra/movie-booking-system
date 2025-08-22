@@ -20,8 +20,8 @@ function Cinemas() {
     // Default to today's date in local timezone
     const today = new Date();
     const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
+    const month = String(today.getMonth() + 1).padStart(2, "0");
+    const day = String(today.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`; // Format: YYYY-MM-DD
   });
 
@@ -47,7 +47,9 @@ function Cinemas() {
 
       // If not in cache, fetch from API
       setLoading(true);
-      const toastId = toast.loading(`Fetching cinemas in ${regionData} for ${selectedDate}...`);
+      const toastId = toast.loading(
+        `Fetching cinemas in ${regionData} for ${selectedDate}...`
+      );
 
       try {
         const response = await axios.post("/api/v1/db/screens", {
@@ -57,10 +59,12 @@ function Cinemas() {
         });
 
         if (response.data.success) {
-          dispatch(setCinemaData({ 
-            cacheKey, 
-            data: response.data.data 
-          }));
+          dispatch(
+            setCinemaData({
+              cacheKey,
+              data: response.data.data,
+            })
+          );
         }
       } catch (error) {
         toast.error(error.response?.data?.message || "Failed to fetch cinemas");
@@ -85,7 +89,9 @@ function Cinemas() {
   };
 
   const handleShowClick = (showId, cinemaName, screenNumber, showtime) => {
-    navigate(`/seats/${showId}`, { state: { cinemaName, screenNumber, showtime } });
+    navigate(`/seats/${showId}`, {
+      state: { cinemaName, screenNumber, showtime },
+    });
   };
 
   return (
@@ -103,26 +109,13 @@ function Cinemas() {
       </Modal>
 
       {!isModalOpen && (
-        <div className="mb-8 space-y-4">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-8 justify-center">
           <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">Region:</h2>
-            <Select
-              options={[
-                { key: "chd", value: "Chandigarh", label: "Chandigarh" },
-                { key: "moh", value: "Mohali", label: "Mohali" },
-              ]}
-              value={regionData}
-              onChange={(e) => handleRegionSelect(e.target.value)}
-              className="w-48"
-            />
-          </div>
-          <div className="flex items-center gap-4">
-            <h2 className="text-xl font-semibold">Date:</h2>
             <input
               type="date"
               value={selectedDate}
               onChange={(e) => setSelectedDate(e.target.value)}
-              min={new Date().toISOString().split('T')[0]} // Prevent selecting past dates
+              min={new Date().toISOString().split("T")[0]} // Prevent selecting past dates
               className="px-3 py-2 rounded-md 
                 bg-gray-100 dark:bg-gray-700 
                 text-black dark:text-white 
@@ -131,6 +124,17 @@ function Cinemas() {
                 focus:bg-gray-50 dark:focus:bg-gray-800
                 focus:border-blue-500 dark:focus:border-blue-600
                 duration-200 w-48"
+            />
+          </div>
+          <div className="flex items-center gap-4">
+            <Select
+              options={[
+                { key: "chd", value: "Chandigarh", label: "Chandigarh" },
+                { key: "moh", value: "Mohali", label: "Mohali" },
+              ]}
+              value={regionData}
+              onChange={(e) => handleRegionSelect(e.target.value)}
+              className="w-48"
             />
           </div>
         </div>
@@ -179,7 +183,8 @@ function Cinemas() {
             ))
           ) : (
             <div className="text-center text-xl text-gray-500">
-              No shows available for this movie in {regionData} on {selectedDate}.
+              No shows available for this movie in {regionData} on{" "}
+              {selectedDate}.
             </div>
           )}
         </div>
