@@ -6,6 +6,8 @@ import { Booking } from "../models/booking.model.js";
 import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Screen } from "../models/screen.model.js";
+import { Cinema } from "../models/cinema.model.js";
+import { Movie } from "../models/movie.model.js";
 
 const payNow = asyncHandler(async (req, res) => {
   const session = await mongoose.startSession();
@@ -105,7 +107,12 @@ const getBookings = asyncHandler(async (req, res) => {
     .select("-createdAt -updatedAt -__v")
     .populate({
       path: "show",
-      select: "-createdAt -updatedAt -__v"
+      select: "-createdAt -updatedAt -__v",
+      populate: {
+        path: "movieId",
+        model: "Movie",
+        select: "name"
+      }
     });
 
   if (bookings.length === 0) {
@@ -114,10 +121,33 @@ const getBookings = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, { bookings }, "No bookings found", true));
   }
 
+  // Enhance bookings with cinema and screen information
+  const enhancedBookings = await Promise.all(
+    bookings.map(async (booking) => {
+      // Find the screen that contains this show
+      const screen = await Screen.findOne({ shows: booking.show._id })
+        .select("screenNumber");
+      
+      // Find the cinema that contains this screen
+      const cinema = await Cinema.findOne({ screens: screen?._id })
+        .select("name city");
+
+      return {
+        ...booking.toObject(),
+        show: {
+          ...booking.show.toObject(),
+          screenNumber: screen?.screenNumber || null,
+          cinemaName: cinema?.name || null,
+          city: cinema?.city || null
+        }
+      };
+    })
+  );
+
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { bookings }, "Bookings fetched successfully", true)
+      new ApiResponse(200, { bookings: enhancedBookings }, "Bookings fetched successfully", true)
     );
 });
 
