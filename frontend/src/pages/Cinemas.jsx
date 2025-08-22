@@ -75,7 +75,7 @@ function Cinemas() {
 
   return (
     <div className="p-6 w-full">
-      <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+      <Modal isOpen={isModalOpen} onClose={() => {}}>
         <div className="text-center">
           <h2 className="text-2xl font-bold mb-6">Select Your City</h2>
           <div className="flex justify-center gap-4">
