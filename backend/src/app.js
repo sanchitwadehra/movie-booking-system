@@ -6,6 +6,9 @@ import { errorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
 
+app.set('trust proxy', 1);
+// The proxy forwards the original user's IP address in a special HTTP header (usually X-Forwarded-For). You just need to tell your Express application to trust this header.
+
 app.use(helmet());
 
 app.use(
