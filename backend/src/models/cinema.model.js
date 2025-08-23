@@ -2,10 +2,6 @@ import mongoose, { Schema } from "mongoose";
 
 const cinemaSchema = new Schema(
   {
-    booking: {
-      type: Schema.Types.ObjectId,
-      ref: "Booking",
-    },
     name: {
       type: String,
       required: [true, "Name is required"],
