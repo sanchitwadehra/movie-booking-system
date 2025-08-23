@@ -4,7 +4,9 @@ A full-stack web application similar to BookMyShow, built as part of a hiring as
 
 ## 🎯 Live Demo
 
-The application is deployed and accessible at: **[mbs-frontend-ten.vercel.app](https://mbs-frontend-ten.vercel.app)**
+The application is deployed and accessible at:
+- **Frontend**: [mbs-frontend-ten.vercel.app](https://mbs-frontend-ten.vercel.app)
+- **Backend API**: [mbs-backend-6b7la.ondigitalocean.app](https://mbs-backend-6b7la.ondigitalocean.app)
 
 You can try out the admin features using these credentials:
 - **Email**: `abc@email.com`
