@@ -40,108 +40,152 @@ const getScreens = asyncHandler(async (req, res) => {
     throw new ApiError(400, "City, movie, and date are required");
   }
 
-  const movie = await Movie.findOne({ _id: movieId });
-  if (!movie) {
-    throw new ApiError(404, "Movie not found");
+  // Validate movieId format to avoid unnecessary DB call
+  if (!mongoose.Types.ObjectId.isValid(movieId)) {
+    throw new ApiError(400, "Invalid movie ID format");
   }
 
   // Convert the selected date from IST to UTC range
-  // When user selects a date, they expect shows for that full day in IST
-  // IST is UTC+5:30, so we need to subtract 5.5 hours to get the UTC equivalent
-  
-  // Create IST date range first (what the user actually wants)
   const istStartOfDay = new Date(`${date}T00:00:00+05:30`);
   const istEndOfDay = new Date(`${date}T23:59:59.999+05:30`);
-  
-  // Convert to UTC (this automatically handles the timezone conversion)
   const startOfDay = new Date(istStartOfDay.toISOString());
   const endOfDay = new Date(istEndOfDay.toISOString());
 
-  // Find shows for the specific movie and date
-  const shows = await Show.find({ 
-    movieId: movie._id,
-    showtime: {
-      $gte: startOfDay,
-      $lte: endOfDay
-    }
-  });
-
-  const showIds = shows.map((s) => s._id);
-
-  const screens = await Screen.find({ shows: { $in: showIds } }).populate(
-    "shows"
-  );
-  const screenIds = screens.map((s) => s._id);
-
-  const cinemas = await Cinema.find({
-    city,
-    screens: { $in: screenIds },
-  }).populate({
-    path: "screens",
-    populate: {
-      path: "shows",
-      model: "Show",
+  // Single optimized aggregation pipeline to get all required data
+  const result = await Cinema.aggregate([
+    // Match cinemas in the specified city
+    { $match: { city: city } },
+    
+    // Lookup screens for these cinemas
+    {
+      $lookup: {
+        from: "screens",
+        localField: "screens",
+        foreignField: "_id",
+        as: "screens"
+      }
     },
-  });
-
-  const filteredCinemas = cinemas
-    .map((cinema) => {
-      const filteredScreens = cinema.screens
-        .map((screen) => {
-          const filteredShows = screen.shows.filter((show) =>
-            showIds.some((id) => id.equals(show._id))
-          );
-          if (filteredShows.length > 0) {
-            // Clean shows data and sort by time
-            const cleanShows = filteredShows
-              .map((show) => {
-                const showObj = show.toObject();
-                delete showObj.createdAt;
-                delete showObj.updatedAt;
-                delete showObj.__v;
-                return showObj;
-              })
-              .sort((a, b) => {
-                // Sort shows by showtime (Date object)
-                if (a.showtime && b.showtime) {
-                  return new Date(a.showtime) - new Date(b.showtime);
-                }
-                return 0;
-              });
-
-            // Clean screen data
-            const screenObj = screen.toObject();
-            delete screenObj.createdAt;
-            delete screenObj.updatedAt;
-            delete screenObj.__v;
-
-            return { ...screenObj, shows: cleanShows };
+    
+    // Unwind screens to work with individual screens
+    { $unwind: "$screens" },
+    
+    // Lookup shows for each screen
+    {
+      $lookup: {
+        from: "shows",
+        localField: "screens.shows",
+        foreignField: "_id",
+        as: "screens.shows"
+      }
+    },
+    
+    // Filter shows by movie and date
+    {
+      $addFields: {
+        "screens.shows": {
+          $filter: {
+            input: "$screens.shows",
+            cond: {
+              $and: [
+                { $eq: ["$$this.movieId", new mongoose.Types.ObjectId(movieId)] },
+                { $gte: ["$$this.showtime", startOfDay] },
+                { $lte: ["$$this.showtime", endOfDay] }
+              ]
+            }
           }
-          return null;
-        })
-        .filter((screen) => screen !== null)
-        .sort((a, b) => {
-          // Sort screens by screen number in ascending order
-          return a.screenNumber - b.screenNumber;
-        });
+        }
+      }
+    },
+    
+    // Only keep screens that have matching shows
+    { $match: { "screens.shows.0": { $exists: true } } },
+    
+    // Sort shows within each screen by showtime
+    {
+      $addFields: {
+        "screens.shows": {
+          $sortArray: {
+            input: "$screens.shows",
+            sortBy: { showtime: 1 }
+          }
+        }
+      }
+    },
+    
+    // Clean up show data (remove unwanted fields)
+    {
+      $addFields: {
+        "screens.shows": {
+          $map: {
+            input: "$screens.shows",
+            as: "show",
+            in: {
+              _id: "$$show._id",
+              movieId: "$$show.movieId",
+              showtime: "$$show.showtime",
+              price: "$$show.price",
+              availableSeats: "$$show.availableSeats",
+              bookedSeats: "$$show.bookedSeats"
+            }
+          }
+        }
+      }
+    },
+    
+    // Clean up screen data
+    {
+      $addFields: {
+        "screens": {
+          _id: "$screens._id",
+          screenNumber: "$screens.screenNumber",
+          totalSeats: "$screens.totalSeats",
+          shows: "$screens.shows"
+        }
+      }
+    },
+    
+    // Group back by cinema to reconstruct the cinema structure
+    {
+      $group: {
+        _id: "$_id",
+        name: { $first: "$name" },
+        city: { $first: "$city" },
+        address: { $first: "$address" },
+        screens: { $push: "$screens" }
+      }
+    },
+    
+    // Sort screens within each cinema by screen number
+    {
+      $addFields: {
+        screens: {
+          $sortArray: {
+            input: "$screens",
+            sortBy: { screenNumber: 1 }
+          }
+        }
+      }
+    },
+    
+    // Sort cinemas by name
+    { $sort: { name: 1 } },
+    
+    // Only return cinemas that have screens with shows
+    { $match: { "screens.0": { $exists: true } } }
+  ]);
 
-      // Clean cinema data
-      const cinemaObj = cinema.toObject();
-      delete cinemaObj.createdAt;
-      delete cinemaObj.updatedAt;
-      delete cinemaObj.__v;
-
-      return { ...cinemaObj, screens: filteredScreens };
-    })
-    .sort((a, b) => {
-      // Sort cinemas alphabetically by name
-      return a.name.localeCompare(b.name);
-    });
+  // Verify movie exists (only if we have results, to avoid unnecessary query)
+  if (result.length === 0) {
+    const movieExists = await Movie.exists({ _id: movieId });
+    if (!movieExists) {
+      throw new ApiError(404, "Movie not found");
+    }
+  }
 
   return res
     .status(200)
     .json(
-      new ApiResponse(200, filteredCinemas, "Screens fetched successfully")
+      new ApiResponse(200, result, "Screens fetched successfully")
     );
 });
 
