@@ -10,7 +10,7 @@ function Home() {
       <div className="flex md:flex-row flex-col justify-center">
         <div className="flex-1 mb-4 text-left">
           <div className="text-5xl font-bold mb-4 underline cursor-pointer">
-            <span onClick={() => navigate("/")}>
+            <span onClick={() => navigate("/movies")}>
               Book Your Movie Tickets with Movie Booking System
             </span>
           </div>
