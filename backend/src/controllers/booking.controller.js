@@ -24,12 +24,12 @@ const payNow = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Seats are required");
     }
 
-    if(seats.length > 6){
+    if (seats.length > 6) {
       throw new ApiError(400, "You can only book up to 6 seats at a time");
     }
 
     // Ensure seats are stored as individual strings
-    const seatStrings = seats.map(seat => String(seat).trim());
+    const seatStrings = seats.map((seat) => String(seat).trim());
 
     const show = await Show.findById(showId).session(session);
 
@@ -37,7 +37,9 @@ const payNow = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Show not found");
     }
 
-    const alreadyBooked = seatStrings.some((seat) => show.seatsBooked.includes(seat));
+    const alreadyBooked = seatStrings.some((seat) =>
+      show.seatsBooked.includes(seat)
+    );
     if (alreadyBooked) {
       throw new ApiError(400, "One or more seats are already booked");
     }
@@ -115,8 +117,8 @@ const getBookings = asyncHandler(async (req, res) => {
       populate: {
         path: "movieId",
         model: "Movie",
-        select: "name"
-      }
+        select: "name",
+      },
     });
 
   if (bookings.length === 0) {
@@ -129,12 +131,14 @@ const getBookings = asyncHandler(async (req, res) => {
   const enhancedBookings = await Promise.all(
     bookings.map(async (booking) => {
       // Find the screen that contains this show
-      const screen = await Screen.findOne({ shows: booking.show._id })
-        .select("screenNumber");
-      
+      const screen = await Screen.findOne({ shows: booking.show._id }).select(
+        "screenNumber"
+      );
+
       // Find the cinema that contains this screen
-      const cinema = await Cinema.findOne({ screens: screen?._id })
-        .select("name city");
+      const cinema = await Cinema.findOne({ screens: screen?._id }).select(
+        "name city"
+      );
 
       return {
         ...booking.toObject(),
@@ -142,8 +146,8 @@ const getBookings = asyncHandler(async (req, res) => {
           ...booking.show.toObject(),
           screenNumber: screen?.screenNumber || null,
           cinemaName: cinema?.name || null,
-          city: cinema?.city || null
-        }
+          city: cinema?.city || null,
+        },
       };
     })
   );
@@ -151,7 +155,12 @@ const getBookings = asyncHandler(async (req, res) => {
   return res
     .status(200)
     .json(
-      new ApiResponse(200, { bookings: enhancedBookings }, "Bookings fetched successfully", true)
+      new ApiResponse(
+        200,
+        { bookings: enhancedBookings },
+        "Bookings fetched successfully",
+        true
+      )
     );
 });
 
