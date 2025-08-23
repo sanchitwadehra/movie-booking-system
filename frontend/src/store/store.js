@@ -8,6 +8,7 @@ import routeSlice from './routeSlice';
 import movieSlice from './movieSlice';
 import regionSlice from './regionSlice';
 import cinemaSlice from './cinemaSlice';
+import bookingSlice from './bookingSlice';
 
 // Combine all reducers
 const rootReducer = combineReducers({
@@ -16,13 +17,14 @@ const rootReducer = combineReducers({
   movie: movieSlice,
   region: regionSlice,
   cinema: cinemaSlice,
+  booking: bookingSlice,
 });
 
 // Persist configuration
 const persistConfig = {
   key: "root",
   storage, // you can change this to sessionStorage if needed
-  whitelist: ["route", "region"],
+  whitelist: ["route", "region", "booking"],
 };
 
 // Create persisted reducer

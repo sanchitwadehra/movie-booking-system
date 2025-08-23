@@ -68,6 +68,7 @@ You can try out the admin features using these credentials:
 
 #### Enhanced User Experience
 - ✅ **Authentication Flow**: Seamless login/register with session persistence
+- ✅ **Seat Selection Persistence**: Automatically saves and restores seat selection when users are redirected to login
 - ✅ **Route Protection**: Protected routes with authentication checks
 - ✅ **Responsive Design**: Mobile-first design with dark/light theme support
 - ✅ **Date Selection**: Pick specific dates for show availability
@@ -291,7 +292,7 @@ You can test all API endpoints using our comprehensive Postman collection:
 3. **Pick Date & Cinema**: Select your preferred date and cinema
 4. **Choose Showtime**: Click on available showtimes
 5. **Select Seats**: Choose up to 6 seats from the interactive seat map
-6. **Login/Register**: Authenticate to proceed with booking
+6. **Login/Register**: If not logged in, your seat selection is automatically saved and restored after authentication
 7. **Confirm Booking**: Click "Pay Now" to finalize your booking
 8. **View History**: Check your bookings in the "Bookings" section
 
@@ -321,7 +322,7 @@ movie-booking-system/
 │   ├── src/
 │   │   ├── components/      # Reusable UI components
 │   │   ├── pages/           # Page components
-│   │   ├── store/           # Redux store & slices
+│   │   ├── store/           # Redux store & slices (auth, booking, cinema, movie, region, route)
 │   │   ├── api/             # API client configuration
 │   │   ├── App.jsx          # Main app component
 │   │   └── main.jsx         # React entry point
@@ -364,9 +365,10 @@ movie-booking-system/
 ## 🔄 State Management
 
 - **Redux Toolkit**: Modern Redux with simplified syntax
-- **Redux Persist**: Automatic state persistence
+- **Redux Persist**: Automatic state persistence for user preferences and booking data
+- **Booking State**: Seat selection persistence across authentication flows
 - **Normalized State**: Efficient data structure
-- **Caching Strategy**: Performance optimization
+- **Caching Strategy**: Performance optimization with automatic cleanup
 
 ## 🧪 Development Features
 

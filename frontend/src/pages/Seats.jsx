@@ -5,6 +5,7 @@ import apiClient from "../api/axios";
 import toast from "react-hot-toast";
 import { Loading, Modal, Button, Select } from "../components";
 import { setLastRoute } from "../store/routeSlice";
+import { saveSeatSelection, clearSeatSelection, cleanupOldBookings } from "../store/bookingSlice";
 
 function Seats() {
   const { showId } = useParams();
@@ -13,8 +14,9 @@ function Seats() {
   const dispatch = useDispatch();
   const { cinemaName, screenNumber, showtime } = location.state || {};
   
-  // Get auth status from Redux store
+  // Get auth status and booking data from Redux store
   const authStatus = useSelector((state) => state.auth.status);
+  const pendingBooking = useSelector((state) => state.booking.pendingBookings[showId]);
 
   const [loading, setLoading] = useState(true);
   const [showData, setShowData] = useState(null);
@@ -37,6 +39,16 @@ function Seats() {
     const currentPath = `/seats/${showId}`;
     dispatch(setLastRoute(currentPath));
 
+    // Clean up old booking data
+    dispatch(cleanupOldBookings());
+
+    // Check if there's pending booking data for this show
+    if (pendingBooking) {
+      setNumSeats(pendingBooking.numSeats);
+      setSelectedSeats(pendingBooking.selectedSeats);
+      setIsModalOpen(false); // Keep modal closed if we have saved data
+    }
+
     const fetchShowData = async () => {
       setLoading(true);
       try {
@@ -54,7 +66,7 @@ function Seats() {
     };
 
     fetchShowData();
-  }, [showId, dispatch]);
+  }, [showId, dispatch, pendingBooking]);
 
   const formatTime = (isoString) => {
     const date = new Date(isoString);
@@ -91,6 +103,12 @@ function Seats() {
   const handlePayNow = async () => {
     // Check authentication status first
     if (!authStatus) {
+      // Save seat selection data before redirecting to auth
+      dispatch(saveSeatSelection({
+        showId,
+        selectedSeats,
+        numSeats
+      }));
       toast.error("Please login to book seats");
       navigate("/auth");
       return;
@@ -115,7 +133,9 @@ function Seats() {
       if (response.data.success) {
         toast.dismiss(loadingToast);
         toast.success("Booking successful!");
-        // Navigate to home page after successful booking
+        // Clear the saved booking data after successful payment
+        dispatch(clearSeatSelection({ showId }));
+        // Navigate to bookings page after successful booking
         navigate("/bookings");
       }
     } catch (error) {
