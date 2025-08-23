@@ -19,6 +19,7 @@ You can try out the admin features using these credentials:
 - **bcrypt** - Password hashing
 - **CORS** - Cross-origin resource sharing
 - **Helmet** - Security middleware
+- **Express Rate Limit** - API rate limiting and throttling
 - **Validator** - Input validation
 - **Cookie-parser** - Cookie handling
 
@@ -246,28 +247,31 @@ VITE_PROXY_DOMAIN=http://localhost:8000
 ## 📡 API Endpoints
 
 ### Authentication Routes (`/api/v1/auth`)
-- `POST /` - Login/Register user
-- `POST /refresh` - Refresh access token
-- `POST /logout` - Logout user
+- `POST /` - Login/Register user *(Login Rate Limited: 15/15min)*
+- `POST /refresh` - Refresh access token *(Public Rate Limited: 50/15min)*
+- `POST /logout` - Logout user *(Authenticated Rate Limited: 25/15min)*
 
 ### User Routes (`/api/v1/user`)
-- `GET /` - Get current user details
+- `GET /` - Get current user details *(Authenticated Rate Limited: 25/15min)*
 
 ### Database Routes (`/api/v1/db`)
-- `GET /movies` - Get all movies with active shows
-- `POST /screens` - Get cinemas and showtimes for a movie
-- `POST /show` - Get specific show details
+- `GET /movies` - Get all movies with active shows *(Public Rate Limited: 50/15min)*
+- `POST /screens` - Get cinemas and showtimes for a movie *(Public Rate Limited: 50/15min)*
+- `POST /show` - Get specific show details *(Public Rate Limited: 50/15min)*
 
 ### Booking Routes (`/api/v1/booking`)
-- `POST /pay-now` - Book seats for a show
-- `GET /get-bookings` - Get user's booking history
+- `POST /pay-now` - Book seats for a show *(Authenticated Rate Limited: 25/15min)*
+- `GET /get-bookings` - Get user's booking history *(Authenticated Rate Limited: 25/15min)*
 
 ### Admin Routes (`/api/v1/admin`)
-- `POST /movie` - Add new movie
-- `POST /cinema` - Add new cinema
-- `POST /screen` - Add new screen
-- `POST /show` - Add new show
-- `POST /generate-sample-data` - Generate sample data
+- `POST /movie` - Add new movie *(Authenticated Rate Limited: 25/15min)*
+- `POST /cinema` - Add new cinema *(Authenticated Rate Limited: 25/15min)*
+- `POST /screen` - Add new screen *(Authenticated Rate Limited: 25/15min)*
+- `POST /show` - Add new show *(Authenticated Rate Limited: 25/15min)*
+- `POST /generate-sample-data` - Generate sample data *(Authenticated Rate Limited: 25/15min)*
+
+### Health Check Routes (`/api/v1/health`)
+- `GET /` - Health check endpoint *(Public Rate Limited: 50/15min)*
 
 ## 🎮 Usage Guide
 
@@ -324,6 +328,10 @@ movie-booking-system/
 - **JWT Authentication**: Secure token-based authentication
 - **Password Hashing**: bcrypt for secure password storage
 - **HTTP-Only Cookies**: Secure token storage
+- **Rate Limiting**: Multi-tier API throttling protection
+  - **Login Rate Limiting**: 15 requests per 15 minutes for authentication endpoints
+  - **Authenticated User Limiting**: 25 requests per 15 minutes for logged-in users
+  - **Public API Limiting**: 50 requests per 15 minutes for public endpoints
 - **CORS Protection**: Configured for specific origins
 - **Helmet Middleware**: Security headers
 - **Input Validation**: Server and client-side validation
