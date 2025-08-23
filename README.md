@@ -246,6 +246,10 @@ VITE_PROXY_DOMAIN=http://localhost:8000
 
 ## 📡 API Endpoints
 
+### Postman Collection
+You can test all API endpoints using our comprehensive Postman collection:
+**[Movie Booking System API Collection](https://www.postman.com/aviation-participant-82153467/movie-booking-system/collection/lxv7wy6/mbs-backend?action=share&creator=37702018)**
+
 ### Authentication Routes (`/api/v1/auth`)
 - `POST /` - Login/Register user *(Login Rate Limited: 15/15min)*
 - `POST /refresh` - Refresh access token *(Public Rate Limited: 50/15min)*
@@ -277,7 +281,7 @@ VITE_PROXY_DOMAIN=http://localhost:8000
 
 ### For End Users
 
-1. **Browse Movies**: Visit the homepage and click "Get Tickets" to see available movies
+1. **Browse Movies**: Visit the homepage and click "Start Booking Now" to see available movies
 2. **Select City**: Choose between Chandigarh or Mohali
 3. **Pick Date & Cinema**: Select your preferred date and cinema
 4. **Choose Showtime**: Click on available showtimes
@@ -387,8 +391,8 @@ The project follows proper Git practices with meaningful commit messages. Each f
 2. Set environment variables in Vercel dashboard
 3. Deploy automatically on push to main branch
 
-### Backend (Railway/Heroku)
-1. Create a new project on Railway or Heroku
+### Backend (Digital Ocean)
+1. Create a new App on Digital Ocean
 2. Connect your GitHub repository
 3. Set environment variables
 4. Deploy automatically on push to main branch
