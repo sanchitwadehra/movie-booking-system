@@ -50,7 +50,7 @@ You can try out the admin features using these credentials:
 - ✅ **Movie Management**: Movie listings and details
 - ✅ **Show Management**: Showtimes with date/time scheduling
 - ✅ **Booking Management**: Seat selection and booking confirmation
-- ✅ **Sample Data Generation**: Admin endpoint to populate test data
+- ✅ **Sample Data Generation**: Admin endpoint to populate test data with current dates
 
 #### Frontend User Flow
 - ✅ **Cinema & Show Listing**: Browse cinemas and available movies with showtimes
@@ -64,7 +64,7 @@ You can try out the admin features using these credentials:
 #### Admin Panel
 - ✅ **Secure Admin Interface**: Admin-only routes with authentication middleware
 - ✅ **Content Management**: Add/edit movies, cinemas, screens, and shows
-- ✅ **Sample Data Generation**: Bulk data creation for testing
+- ✅ **Sample Data Generation**: Bulk data creation with dynamic dates for testing
 
 #### Enhanced User Experience
 - ✅ **Authentication Flow**: Seamless login/register with session persistence
@@ -243,6 +243,7 @@ VITE_PROXY_DOMAIN=http://localhost:8000
    - First, create an admin user by registering normally
    - Update the user's `isAdmin` field to `true` in MongoDB
    - Make a POST request to `/api/v1/admin/generate-sample-data`
+   - **Note**: Sample data automatically uses current date and next day for showtimes
    
    Or use the following curl command:
    ```bash
@@ -299,7 +300,7 @@ You can test all API endpoints using our comprehensive Postman collection:
 ### For Administrators
 
 1. **Admin Access**: Ensure your user account has `isAdmin: true`
-2. **Generate Data**: Use the generate-sample-data endpoint to populate test data
+2. **Generate Data**: Use the generate-sample-data endpoint to populate test data with current dates
 3. **Manage Content**: Use admin endpoints to add movies, cinemas, screens, and shows
 
 ## 🏗️ Project Structure

@@ -93,22 +93,37 @@ const generateSampleData = asyncHandler(async (req, res) => {
     { name: "Cinepolis Bestech", city: "Mohali" },
   ];
 
-  // 3. Loop through each cinema to create unique screens and shows
+  // 3. Get today's and tomorrow's dates in IST
+  const today = new Date();
+  const tomorrow = new Date(today);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+
+  // Helper function to create IST time and convert to UTC
+  const createISTTimeAsUTC = (date, hours, minutes = 0) => {
+    // Create date in IST (UTC+5:30)
+    const istDate = new Date(date);
+    istDate.setHours(hours, minutes, 0, 0);
+    // Convert IST to UTC by subtracting 5 hours 30 minutes
+    const utcDate = new Date(istDate.getTime() - (5.5 * 60 * 60 * 1000));
+    return utcDate;
+  };
+
+  // 4. Loop through each cinema to create unique screens and shows
   for (const cinemaInfo of cinemaData) {
     // For each cinema, create a unique set of shows for its screens
     const showsForThisCinema = await Show.create([
-      // Shows for Screen 1 - August 23rd IST (stored as UTC)
-      { movieId: inception._id, showtime: "2025-08-23T04:30:00.000Z" }, // 10:00 AM IST
-      { movieId: oppenheimer._id, showtime: "2025-08-23T06:30:00.000Z" }, // 12:00 PM IST
-      // Shows for Screen 2 - August 23rd IST (stored as UTC)
-      { movieId: inception._id, showtime: "2025-08-23T09:30:00.000Z" }, // 3:00 PM IST
-      { movieId: oppenheimer._id, showtime: "2025-08-23T12:30:00.000Z" }, // 6:00 PM IST
-      // Shows for Screen 3 - August 23rd IST (stored as UTC)
-      { movieId: inception._id, showtime: "2025-08-23T15:30:00.000Z" }, // 9:00 PM IST
-      { movieId: oppenheimer._id, showtime: "2025-08-23T17:30:00.000Z" }, // 11:00 PM IST
-      // Shows for Screen 4 - August 24th IST (stored as UTC)
-      { movieId: inception._id, showtime: "2025-08-24T04:30:00.000Z" }, // 10:00 AM IST Aug 24
-      { movieId: oppenheimer._id, showtime: "2025-08-24T12:30:00.000Z" }, // 6:00 PM IST Aug 24
+      // Shows for Screen 1 - Today IST (stored as UTC)
+      { movieId: inception._id, showtime: createISTTimeAsUTC(today, 10, 0) }, // 10:00 AM IST
+      { movieId: oppenheimer._id, showtime: createISTTimeAsUTC(today, 12, 0) }, // 12:00 PM IST
+      // Shows for Screen 2 - Today IST (stored as UTC)
+      { movieId: inception._id, showtime: createISTTimeAsUTC(today, 15, 0) }, // 3:00 PM IST
+      { movieId: oppenheimer._id, showtime: createISTTimeAsUTC(today, 18, 0) }, // 6:00 PM IST
+      // Shows for Screen 3 - Today IST (stored as UTC)
+      { movieId: inception._id, showtime: createISTTimeAsUTC(today, 21, 0) }, // 9:00 PM IST
+      { movieId: oppenheimer._id, showtime: createISTTimeAsUTC(today, 23, 0) }, // 11:00 PM IST
+      // Shows for Screen 4 - Tomorrow IST (stored as UTC)
+      { movieId: inception._id, showtime: createISTTimeAsUTC(tomorrow, 10, 0) }, // 10:00 AM IST Tomorrow
+      { movieId: oppenheimer._id, showtime: createISTTimeAsUTC(tomorrow, 18, 0) }, // 6:00 PM IST Tomorrow
     ]);
 
     // Create the screens and assign the unique shows we just made
