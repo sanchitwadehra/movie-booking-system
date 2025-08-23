@@ -9,7 +9,7 @@ The application is deployed and accessible at:
 - **Backend API**: [mbs-backend-6b7la.ondigitalocean.app](https://mbs-backend-6b7la.ondigitalocean.app)
 
 ### 🎥 Video Walkthrough
-Watch a 90-second overview of the complete user flow: **[Application Demo Video](https://drive.google.com/file/d/1_FHOtP5B-cNgrh_WKo2IByj9NrPcE-zW/view?usp=sharing)**
+Watch a 90-second overview of the complete user flow: **[Application Demo Video](https://drive.google.com/file/d/1SbCjHwgwlLr0c0WYZRWa7dGg__PxFWMr/view?usp=sharing)**
 
 You can try out the admin features using these credentials:
 - **Email**: `abc@email.com`
