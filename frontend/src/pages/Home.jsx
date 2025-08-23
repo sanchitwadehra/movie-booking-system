@@ -11,21 +11,24 @@ function Home() {
         <div className="flex-1 mb-4 text-left">
           <div className="text-5xl font-bold mb-4 underline cursor-pointer">
             <span onClick={() => navigate("/movies")}>
-              Book Your Movie Tickets with Movie Booking System
+              Experience Cinema Like Never Before
             </span>
           </div>
           <div className="text-xl font-semibold">
-            Movie Booking System is a platform for booking movie tickets
+            Your gateway to the latest blockbusters, premium seats, and unforgettable movie experiences
           </div>
         </div>
         <div className="flex-1 text-left">
           <div className="text-xl mb-2">
-            At Movie Booking System, we are committed to helping you make the most of
-            your movie tickets. We provide movie booking services.
+            Discover the magic of movies with seamless booking, instant confirmations, 
+            and access to the best theaters in your city. From the latest releases to 
+            timeless classics, we bring the cinema to your fingertips.
           </div>
           <ul className="list-disc text-xl list-inside mb-2">
-            <li>Convenience</li>
-            <li>Trust</li>
+            <li>🎬 Latest movies & showtimes</li>
+            <li>🎟️ Instant booking confirmation</li>
+            <li>💺 Choose your perfect seats</li>
+            <li>🏆 Premium theater experience</li>
           </ul>
           <Button
             type="button"
@@ -35,7 +38,7 @@ function Home() {
             className="mt-4"
             onClick={() => navigate("/movies")}
           >
-            Get Tickets
+            Start Booking Now
           </Button>
         </div>
       </div>
