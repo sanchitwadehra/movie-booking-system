@@ -56,6 +56,9 @@ const getScreens = asyncHandler(async (req, res) => {
   const istEndOfDay = new Date(`${date}T23:59:59.999+05:30`);
   const startOfDay = new Date(istStartOfDay.toISOString());
   const endOfDay = new Date(istEndOfDay.toISOString());
+  
+  // Get current UTC time to filter out past shows
+  const currentTime = new Date();
 
   // Single optimized aggregation pipeline to get all required data
   const result = await Cinema.aggregate([
@@ -85,7 +88,7 @@ const getScreens = asyncHandler(async (req, res) => {
       }
     },
     
-    // Filter shows by movie and date
+    // Filter shows by movie, date, and future showtime
     {
       $addFields: {
         "screens.shows": {
@@ -95,7 +98,8 @@ const getScreens = asyncHandler(async (req, res) => {
               $and: [
                 { $eq: ["$$this.movieId", new mongoose.Types.ObjectId(movieId)] },
                 { $gte: ["$$this.showtime", startOfDay] },
-                { $lte: ["$$this.showtime", endOfDay] }
+                { $lte: ["$$this.showtime", endOfDay] },
+                { $gt: ["$$this.showtime", currentTime] } // Only future shows
               ]
             }
           }
@@ -204,6 +208,16 @@ const getShow = asyncHandler(async (req, res) => {
       select: "-__v -createdAt -updatedAt",
     })
     .select("-__v -createdAt -updatedAt");
+
+  if (!show) {
+    throw new ApiError(404, "Show not found");
+  }
+
+  // Check if the show time has already passed
+  const currentTime = new Date();
+  if (show.showtime <= currentTime) {
+    throw new ApiError(400, "This show has already ended and is no longer available for booking");
+  }
 
   return res
     .status(200)
