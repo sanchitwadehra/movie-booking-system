@@ -133,23 +133,8 @@ const getScreens = asyncHandler(async (req, res) => {
               _id: "$$show._id",
               movieId: "$$show.movieId",
               showtime: "$$show.showtime",
-              price: "$$show.price",
-              availableSeats: "$$show.availableSeats",
-              bookedSeats: "$$show.bookedSeats"
             }
           }
-        }
-      }
-    },
-    
-    // Clean up screen data
-    {
-      $addFields: {
-        "screens": {
-          _id: "$screens._id",
-          screenNumber: "$screens.screenNumber",
-          totalSeats: "$screens.totalSeats",
-          shows: "$screens.shows"
         }
       }
     },
@@ -160,8 +145,14 @@ const getScreens = asyncHandler(async (req, res) => {
         _id: "$_id",
         name: { $first: "$name" },
         city: { $first: "$city" },
-        address: { $first: "$address" },
-        screens: { $push: "$screens" }
+        screens: { 
+            $push: {
+                _id: "$screens._id",
+                screenNumber: "$screens.screenNumber",
+                totalSeats: "$screens.totalSeats",
+                shows: "$screens.shows",
+            }
+        }
       }
     },
     
