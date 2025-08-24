@@ -73,6 +73,7 @@ You can try out the admin features using these credentials:
 - ✅ **Responsive Design**: Mobile-first design with dark/light theme support
 - ✅ **Date Selection**: Pick specific dates for show availability
 - ✅ **City Selection**: Choose from available cities (Chandigarh, Mohali)
+- ✅ **Smart Filtering**: Automatically filters out past shows to display only available showtimes
 - ✅ **Caching**: Redux-based caching for improved performance
 - ✅ **Error Handling**: Comprehensive error handling with user feedback
 - ✅ **Loading States**: Loading indicators throughout the application
@@ -243,7 +244,8 @@ VITE_PROXY_DOMAIN=http://localhost:8000
    - First, create an admin user by registering normally
    - Update the user's `isAdmin` field to `true` in MongoDB
    - Make a POST request to `/api/v1/admin/generate-sample-data`
-   - **Note**: Sample data automatically uses current date and next day for showtimes
+   - **Note**: Sample data automatically uses current date and next two days for showtimes (three consecutive days total)
+   - **Important**: This operation clears all existing bookings and resets user booking history for a clean testing environment
    
    Or use the following curl command:
    ```bash
@@ -266,9 +268,9 @@ You can test all API endpoints using our comprehensive Postman collection:
 - `GET /` - Get current user details *(Authenticated Rate Limited: 25/15min)*
 
 ### Database Routes (`/api/v1/db`)
-- `GET /movies` - Get all movies with active shows *(Public Rate Limited: 50/15min)*
-- `POST /screens` - Get cinemas and showtimes for a movie *(Public Rate Limited: 50/15min)*
-- `POST /show` - Get specific show details *(Public Rate Limited: 50/15min)*
+- `GET /movies` - Get all movies with active future shows *(Public Rate Limited: 50/15min)*
+- `POST /screens` - Get cinemas and showtimes for a movie (future shows only) *(Public Rate Limited: 50/15min)*
+- `POST /show` - Get specific show details (validates show is still available) *(Public Rate Limited: 50/15min)*
 
 ### Booking Routes (`/api/v1/booking`)
 - `POST /pay-now` - Book seats for a show *(Authenticated Rate Limited: 25/15min)*
@@ -279,7 +281,7 @@ You can test all API endpoints using our comprehensive Postman collection:
 - `POST /cinema` - Add new cinema *(Authenticated Rate Limited: 25/15min)*
 - `POST /screen` - Add new screen *(Authenticated Rate Limited: 25/15min)*
 - `POST /show` - Add new show *(Authenticated Rate Limited: 25/15min)*
-- `POST /generate-sample-data` - Generate sample data *(Authenticated Rate Limited: 25/15min)*
+- `POST /generate-sample-data` - Generate sample data with clean state (clears existing bookings) *(Authenticated Rate Limited: 25/15min)*
 
 ### Health Check Routes (`/api/v1/health`)
 - `GET /` - Health check endpoint *(Public Rate Limited: 50/15min)*
