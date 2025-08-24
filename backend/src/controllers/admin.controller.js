@@ -5,6 +5,8 @@ import { Movie } from "../models/movie.model.js";
 import { Cinema } from "../models/cinema.model.js";
 import { Screen } from "../models/screen.model.js";
 import { Show } from "../models/show.model.js";
+import { Booking } from "../models/booking.model.js";
+import { User } from "../models/user.model.js";
 
 const addMovie = asyncHandler(async (req, res) => {
   const { name, description, image } = req.body;
@@ -64,6 +66,8 @@ const addShow = asyncHandler(async (req, res) => {
 
 const generateSampleData = asyncHandler(async (req, res) => {
   // Clear existing data
+  await Booking.deleteMany({});
+  await User.updateMany({}, { $set: { bookings: [] } });
   await Movie.deleteMany({});
   await Show.deleteMany({});
   await Screen.deleteMany({});
