@@ -8,7 +8,13 @@ import { Show } from "../models/show.model.js";
 import mongoose from "mongoose";
 
 const getMovies = asyncHandler(async (req, res) => {
-  const shows = await Show.find({}).populate("movieId");
+  // Get current UTC time to filter out past shows
+  const currentTime = new Date();
+  
+  const shows = await Show.find({
+    showtime: { $gt: currentTime } // Only get shows with future showtimes
+  }).populate("movieId");
+  
   const movies = shows.reduce((acc, show) => {
     if (show.movieId && !acc.some((m) => m._id.equals(show.movieId._id))) {
       acc.push(show.movieId);
