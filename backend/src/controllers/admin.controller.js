@@ -115,35 +115,83 @@ const generateSampleData = asyncHandler(async (req, res) => {
     { name: "Cinepolis Bestech", city: "Mohali" },
   ];
 
-  // 3. Get today's and tomorrow's dates in IST
+  // 3. Get today's, tomorrow's and day after tomorrow's dates in IST
   const today = new Date();
   const tomorrow = new Date(today);
   tomorrow.setDate(tomorrow.getDate() + 1);
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(dayAfterTomorrow.getDate() + 2);
 
   // 4. Loop through each cinema to create unique screens and shows
   for (const cinemaInfo of cinemaData) {
     // For each cinema, create a unique set of shows for its screens
     const showsForThisCinema = await Show.create([
-      // Shows for Screen 1 - Today IST (stored as UTC)
+      // TODAY - Inception Shows (3 shows)
       { movieId: inception._id, showtime: createUTCFromIST(today, 10, 0) }, // 10:00 AM IST
-      { movieId: oppenheimer._id, showtime: createUTCFromIST(today, 12, 0) }, // 12:00 PM IST
-      // Shows for Screen 2 - Today IST (stored as UTC)
       { movieId: inception._id, showtime: createUTCFromIST(today, 15, 0) }, // 3:00 PM IST
-      { movieId: oppenheimer._id, showtime: createUTCFromIST(today, 18, 0) }, // 6:00 PM IST
-      // Shows for Screen 3 - Today IST (stored as UTC)
       { movieId: inception._id, showtime: createUTCFromIST(today, 21, 0) }, // 9:00 PM IST
+      
+      // TODAY - Oppenheimer Shows (3 shows)
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(today, 12, 0) }, // 12:00 PM IST
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(today, 18, 0) }, // 6:00 PM IST
       { movieId: oppenheimer._id, showtime: createUTCFromIST(today, 23, 0) }, // 11:00 PM IST
-      // Shows for Screen 4 - Tomorrow IST (stored as UTC)
+      
+      // TOMORROW - Inception Shows (3 shows)
       { movieId: inception._id, showtime: createUTCFromIST(tomorrow, 10, 0) }, // 10:00 AM IST Tomorrow
+      { movieId: inception._id, showtime: createUTCFromIST(tomorrow, 15, 0) }, // 3:00 PM IST Tomorrow
+      { movieId: inception._id, showtime: createUTCFromIST(tomorrow, 21, 0) }, // 9:00 PM IST Tomorrow
+      
+      // TOMORROW - Oppenheimer Shows (3 shows)
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(tomorrow, 12, 0) }, // 12:00 PM IST Tomorrow
       { movieId: oppenheimer._id, showtime: createUTCFromIST(tomorrow, 18, 0) }, // 6:00 PM IST Tomorrow
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(tomorrow, 23, 0) }, // 11:00 PM IST Tomorrow
+      
+      // DAY AFTER TOMORROW - Inception Shows (3 shows)
+      { movieId: inception._id, showtime: createUTCFromIST(dayAfterTomorrow, 10, 0) }, // 10:00 AM IST Day After Tomorrow
+      { movieId: inception._id, showtime: createUTCFromIST(dayAfterTomorrow, 15, 0) }, // 3:00 PM IST Day After Tomorrow
+      { movieId: inception._id, showtime: createUTCFromIST(dayAfterTomorrow, 21, 0) }, // 9:00 PM IST Day After Tomorrow
+      
+      // DAY AFTER TOMORROW - Oppenheimer Shows (3 shows)
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(dayAfterTomorrow, 12, 0) }, // 12:00 PM IST Day After Tomorrow
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(dayAfterTomorrow, 18, 0) }, // 6:00 PM IST Day After Tomorrow
+      { movieId: oppenheimer._id, showtime: createUTCFromIST(dayAfterTomorrow, 23, 0) }, // 11:00 PM IST Day After Tomorrow
     ]);
 
-    // Create the screens and assign the unique shows we just made
+    // Create the screens and assign the shows across 4 screens to accommodate all shows
     const screenDocs = await Screen.create([
-      { screenNumber: 1, totalSeats: 100, shows: [showsForThisCinema[0]._id, showsForThisCinema[1]._id] },
-      { screenNumber: 2, totalSeats: 100, shows: [showsForThisCinema[2]._id, showsForThisCinema[3]._id] },
-      { screenNumber: 3, totalSeats: 100, shows: [showsForThisCinema[4]._id, showsForThisCinema[5]._id] },
-      { screenNumber: 4, totalSeats: 100, shows: [showsForThisCinema[6]._id, showsForThisCinema[7]._id] },
+      // Screen 1 - Mixed shows across all 3 days (4-5 shows)
+      { screenNumber: 1, totalSeats: 100, shows: [
+        showsForThisCinema[0]._id, // Inception 10 AM Today
+        showsForThisCinema[6]._id, // Inception 10 AM Tomorrow
+        showsForThisCinema[12]._id, // Inception 10 AM Day After Tomorrow
+        showsForThisCinema[3]._id, // Oppenheimer 12 PM Today
+        showsForThisCinema[9]._id  // Oppenheimer 12 PM Tomorrow
+      ] },
+      
+      // Screen 2 - Mixed shows across all 3 days (4-5 shows)
+      { screenNumber: 2, totalSeats: 100, shows: [
+        showsForThisCinema[1]._id, // Inception 3 PM Today
+        showsForThisCinema[7]._id, // Inception 3 PM Tomorrow
+        showsForThisCinema[13]._id, // Inception 3 PM Day After Tomorrow
+        showsForThisCinema[4]._id, // Oppenheimer 6 PM Today
+        showsForThisCinema[10]._id // Oppenheimer 6 PM Tomorrow
+      ] },
+      
+      // Screen 3 - Mixed shows across all 3 days (4-5 shows)
+      { screenNumber: 3, totalSeats: 100, shows: [
+        showsForThisCinema[2]._id, // Inception 9 PM Today
+        showsForThisCinema[8]._id, // Inception 9 PM Tomorrow
+        showsForThisCinema[14]._id, // Inception 9 PM Day After Tomorrow
+        showsForThisCinema[5]._id, // Oppenheimer 11 PM Today
+        showsForThisCinema[11]._id // Oppenheimer 11 PM Tomorrow
+      ] },
+      
+      // Screen 4 - Remaining shows (4 shows)
+      { screenNumber: 4, totalSeats: 100, shows: [
+        showsForThisCinema[15]._id, // Oppenheimer 12 PM Day After Tomorrow
+        showsForThisCinema[16]._id, // Oppenheimer 6 PM Day After Tomorrow
+        showsForThisCinema[17]._id  // Oppenheimer 11 PM Day After Tomorrow
+      ] },
     ]);
 
     // Create the cinema and link its screens
