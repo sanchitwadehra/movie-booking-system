@@ -82,7 +82,8 @@ const addShow = asyncHandler(async (req, res) => {
     .json(new ApiResponse(201, show, "Show added successfully"));
 });
 
-const generateSampleData = asyncHandler(async (req, res) => {
+// Core sample data generation logic (reusable)
+const generateSampleDataCore = async () => {
   // Clear existing data
   await Booking.deleteMany({});
   await User.updateMany({}, { $set: { bookings: [] } });
@@ -201,7 +202,18 @@ const generateSampleData = asyncHandler(async (req, res) => {
     });
   }
 
+};
+
+const generateSampleData = asyncHandler(async (req, res) => {
+  await generateSampleDataCore();
   return res.status(201).json(new ApiResponse(201, {}, "Sample data generated successfully"));
 });
 
-export { addMovie, addCinema, addScreen, addShow, generateSampleData };
+// Manual trigger for cron job (useful for testing)
+const triggerCronDataRefresh = asyncHandler(async (req, res) => {
+  await generateSampleDataCore();
+  
+  return res.status(200).json(new ApiResponse(200, {}, "Cron data refresh triggered successfully"));
+});
+
+export { addMovie, addCinema, addScreen, addShow, generateSampleData, triggerCronDataRefresh, generateSampleDataCore };

@@ -27,6 +27,7 @@ You can try out the admin features using these credentials:
 - **Express Rate Limit** - API rate limiting and throttling
 - **Validator** - Input validation
 - **Cookie-parser** - Cookie handling
+- **node-cron** - Automated task scheduling
 
 ### Frontend
 - **React 19** - UI library
@@ -65,6 +66,7 @@ You can try out the admin features using these credentials:
 - ✅ **Secure Admin Interface**: Admin-only routes with authentication middleware
 - ✅ **Content Management**: Add/edit movies, cinemas, screens, and shows
 - ✅ **Sample Data Generation**: Bulk data creation with dynamic dates for testing
+- ✅ **Automated Data Refresh**: Cron job automatically refreshes sample data every 2 days at midnight IST
 
 #### Enhanced User Experience
 - ✅ **Authentication Flow**: Seamless login/register with session persistence
@@ -207,6 +209,11 @@ CORS_ORIGIN=http://localhost:5173
 
 # Cookie Configuration
 NODE_DEP_SAMESITE=lax
+
+# Cron Jobs Configuration
+# Set to 'true' to enable automated cron jobs (sample data refresh every 2 days)
+# Set to 'false' or omit to disable cron jobs
+ENABLE_CRON=false
 ```
 
 #### Frontend Environment Variables
@@ -282,6 +289,7 @@ You can test all API endpoints using our comprehensive Postman collection:
 - `POST /screen` - Add new screen *(Authenticated Rate Limited: 25/15min)*
 - `POST /show` - Add new show *(Authenticated Rate Limited: 25/15min)*
 - `POST /generate-sample-data` - Generate sample data with clean state (clears existing bookings) *(Authenticated Rate Limited: 25/15min)*
+- `POST /trigger-cron-refresh` - Manually trigger cron data refresh (for testing) *(Authenticated Rate Limited: 25/15min)*
 
 ### Health Check Routes (`/api/v1/health`)
 - `GET /` - Health check endpoint *(Public Rate Limited: 50/15min)*
@@ -380,6 +388,28 @@ movie-booking-system/
 - **Environment Variables**: Separate dev/prod configurations
 - **CORS Proxy**: Development API proxying
 - **Error Boundaries**: Graceful error handling
+
+## ⏰ Automated Tasks
+
+### Cron Jobs
+The application includes automated cron jobs for maintenance tasks:
+
+- **Sample Data Refresh**: Automatically regenerates sample data every 2 days at midnight IST
+  - **Schedule**: `30 18 */2 * *` (Every 2 days at 18:30 UTC = 12:00 AM IST)
+  - **Purpose**: Ensures sample data always contains current and future show dates
+  - **Scope**: Clears and regenerates all movies, cinemas, screens, shows, and bookings
+  - **Architecture**: Reuses existing admin controller logic for consistency
+  - **Environment Control**: 
+    - **Disabled by default**: Set `ENABLE_CRON=true` to enable in any environment
+    - **Manual Control**: Only runs when explicitly enabled via environment variable
+
+### Cron Job Benefits
+- **Always Fresh Data**: Sample data never becomes outdated with past showtimes
+- **Zero Maintenance**: No manual intervention required to keep demo data current
+- **Clean State**: Each refresh provides a clean testing environment
+- **Explicit Control**: Only runs when explicitly enabled, giving full control over automation
+- **DRY Architecture**: Reuses existing sample data logic, eliminating code duplication
+- **Consistent Behavior**: API endpoints and cron jobs use identical data generation logic
 
 ## 📝 Git Commit History
 
